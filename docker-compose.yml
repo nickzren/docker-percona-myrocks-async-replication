@@ -1,0 +1,35 @@
+version: '3.0'
+
+services:
+
+  master_db:
+    container_name: master_db
+    image: percona/percona-server:8.0.20
+    volumes:
+      - ./config/master.cnf:/etc/my.cnf:ro
+      - ./data/master:/var/lib/mysql:rw
+      - ./input:/var/lib/mysql-files:rw
+    ports:
+      - 3308:3306
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      INIT_ROCKSDB: "yes"
+
+  replica_db:
+    container_name: replica_db
+    image: percona/percona-server:8.0.20
+    volumes:
+      - ./config/replica.cnf:/etc/my.cnf:ro
+      - ./data/replica:/var/lib/mysql:rw
+    ports:
+      - 3309:3306
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      INIT_ROCKSDB: "yes"
+
+networks:
+  backend:
